@@ -1,0 +1,94 @@
+{% extends "base/base.html" %}
+{% block title %}Content{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Content</h2>
+
+    {% if user.is_staff %}
+        <a href="{% url 'content-create' %}" class="btn btn-primary btn-sm">
+            + Add Content
+        </a>
+    {% endif %}
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+
+        {% if object_list %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Author</th>
+                            <th>Created</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for obj in object_list %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+
+                                <td>
+                                    <a href="{% url 'content-detail' obj.pk %}"
+                                       class="fw-semibold text-decoration-none">
+                                        {{ obj.title }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    {{ obj.category.name }}
+                                </td>
+
+                                <td>
+                                    {% if obj.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ obj.created_by.username }}
+                                </td>
+
+                                <td>
+                                    {{ obj.created_at|date:"M d, Y" }}
+                                </td>
+
+                                <td class="text-end">
+                                    {% if user.is_staff %}
+                                        <a href="{% url 'content-update' obj.pk %}"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            Edit
+                                        </a>
+                                        <a href="{% url 'content-delete' obj.pk %}"
+                                           class="btn btn-outline-danger btn-sm">
+                                            Delete
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <p class="text-muted mb-0">
+                    No content available.
+                </p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% include "base/pagination.html" %}
+{% endblock %}
